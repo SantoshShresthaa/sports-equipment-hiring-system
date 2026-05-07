@@ -1,0 +1,44 @@
+[
+    {
+        "eq_id": "ADMKN",
+        "name": "sada",
+        "category": "saa",
+        "type": "asas",
+        "Quantity": "123"
+    },
+    {
+        "eq_id": "ASAA",
+        "name": "assa",
+        "category": "asas",
+        "type": "123",
+        "Quantity": "123"
+    },
+    {
+        "eq_id": "MY EQUIPMENT 1",
+        "name": "hero hamada",
+        "category": "bat",
+        "type": "football",
+        "Quantity": "23"
+    },
+    {
+        "eq_id": "EQ01011",
+        "name": "Santosh SHrestha",
+        "category": "Ball Bat",
+        "type": "Football",
+        "Quantity": "123"
+    },
+    {
+        "eq_id": "EQ112233",
+        "name": "santosh",
+        "category": "ball",
+        "type": "football",
+        "Quantity": "1234"
+    },
+    {
+        "eq_id": "EQ112",
+        "name": "my equipment",
+        "category": "ball",
+        "type": "football",
+        "Quantity": "123"
+    }
+]
