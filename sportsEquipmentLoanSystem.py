@@ -49,6 +49,14 @@ class Coordinator(User):
 
             choice = input("  Enter choice: ").strip()
             if   choice == "1": self.addEquipment()
+            elif choice == "2": self.editEquipment()
+            # elif choice == "3": self.remove_equipment()
+            # elif choice == "4": view_all_equipment()
+            # elif choice == "5": self.view_all_loans()
+            # elif choice == "6": self.view_loans_by_student()
+            # elif choice == "0":
+            #     print("\n  Logging out...")
+            #     break
             else:
                 print(f"\n {RED} [!] Invalid choice. Please try again. {RESET}")
 
@@ -98,6 +106,38 @@ class Coordinator(User):
 
         except IOError as e:
             print(f"\n {RED} [!] File error: {e} {RESET}")
+
+
+    def editEquipment (self):
+        print("\n ---- Edit Equipment ---- ")
+
+        equipment_id = input("Enter the equipment id: ").strip().upper()
+
+        get_all_equipments = getEquipmentLists()
+        found = False
+        # print(get_all_equipments)
+
+        for equipment in  get_all_equipments:
+            if equipment['eq_id'] == equipment_id:
+                found = True
+                print(f"\n Current details: Equipment ID : {equipment['eq_id']} | Equipment Name: {equipment['name']} | Equipment Category:{equipment['category']} | Equipment Quantity: {equipment['Quantity']}")
+                new_name     = input("  New Name     (Enter to keep): ").strip()
+                new_category = input("  New Category (Enter to keep): ").strip()
+                new_sport    = input("  New Sport    (Enter to keep): ").strip()
+                new_quantity    = input(" New Quantity    (Enter to keep): ").strip()
+
+                if new_name: equipment['name'] = new_name
+                if new_category: equipment['category'] = new_category
+                if new_sport: equipment['sport'] = new_sport
+                if new_quantity: equipment['Quantity'] =  new_quantity
+        
+        if not found:
+            print(f"\n {RED} [!] Equipment ID {equipment_id} not found. {RESET}")
+            return
+        
+        saveEquipmentList(get_all_equipments)
+        
+        print(f"\n {GREEN} \n  [✓] Equipment '{equipment_id}' updated successfully. {RESET}")
         
 
 
@@ -133,6 +173,15 @@ def getEquipmentLists():
         print(f"\n  {RED} [!] Error reading equipment list file: {e} {RESET}")
 
     return equipment_lists
+
+# Save equipment lists
+def saveEquipmentList(equipment_lists):
+    try:
+        with open(EQUIPMENT_LIST_FILE, 'w') as list:
+            json.dump(equipment_lists, list, indent=4)
+    except IOError as e:
+        print(f"\n  {RED} [!] Error writing to equipment list file: {e} {RESET}")
+
 
 #User Authentication
 def authenticate():
