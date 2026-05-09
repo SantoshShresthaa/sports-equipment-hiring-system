@@ -18,7 +18,7 @@ RESET = "\033[0m"
 
 
 import json
-
+import pandas as pd
 
 class User:
     def __init__(self, user_id, username, role) -> None:
@@ -48,15 +48,16 @@ class Coordinator(User):
             print("═" * 50)
 
             choice = input("  Enter choice: ").strip()
+            
             if   choice == "1": self.addEquipment()
             elif choice == "2": self.editEquipment()
-            # elif choice == "3": self.remove_equipment()
-            # elif choice == "4": view_all_equipment()
-            # elif choice == "5": self.view_all_loans()
-            # elif choice == "6": self.view_loans_by_student()
-            # elif choice == "0":
-            #     print("\n  Logging out...")
-            #     break
+            elif choice == "3": self.removeEquipment()
+            elif choice == "4": viewAllEquipment()
+            elif choice == "5": self.viewAllLoans()
+            elif choice == "6": self.viewLoansByStudent()
+            elif choice == "0":
+                print("\n  Logging out...")
+                break
             else:
                 print(f"\n {RED} [!] Invalid choice. Please try again. {RESET}")
 
@@ -136,9 +137,65 @@ class Coordinator(User):
             return
         
         saveEquipmentList(get_all_equipments)
-        
+
         print(f"\n {GREEN} \n  [✓] Equipment '{equipment_id}' updated successfully. {RESET}")
+
+    def removeEquipment (self):
+        print("\n ---- Remove Equipment ---- ")
+
+        equipment_id = input("Enter the equipment id: ").strip().upper()
+
+        get_all_equipments = getEquipmentLists()
+        found = False
+
+        for equipment in  get_all_equipments:
+            if equipment['eq_id'] == equipment_id:
+                found = True
+                get_all_equipments.remove(equipment)
         
+        if not found:
+            print(f"\n {RED} [!] Equipment ID {equipment_id} not found. {RESET}")
+            return
+        
+        saveEquipmentList(get_all_equipments)
+
+        print(f"\n {GREEN} \n  [✓] Equipment '{equipment_id}' removed successfully. {RESET}")
+
+        
+    def viewAllLoans(self):
+        print("\n  ── All Loan Records ── \n")
+
+        load_loan_history = getLoanHistory()
+
+        if not load_loan_history:
+            print(f"\n {RED} [!] No loan records found in the system. {RESET}")
+            return
+        
+        print(pd.DataFrame(load_loan_history))
+
+        print(f"\n {GREEN} [✓] Total loan records: {len(load_loan_history)} {RESET}")
+    
+
+    def viewLoansByStudent(self):
+        print("\n  ── View Loan History by Student ── \n")
+
+        student_id = input("  Enter Student ID (e.g. S001): ").strip().upper()
+
+        load_loan_history = getLoanHistory()
+
+        student_loans = []
+
+        for loan in load_loan_history:
+            if loan['student_id'] == student_id:
+                student_loans.append(loan)
+
+        if not student_loans:
+            print(f"\n {RED} [!] No loan records found for Student ID {student_id}. {RESET}")
+            return
+        
+        print(pd.DataFrame(student_loans))
+
+        print(f"\n {GREEN} [✓] Total loans for Student ID {student_id}: {len(student_loans)} {RESET}")
 
 
 #get list of users in the system
@@ -174,6 +231,19 @@ def getEquipmentLists():
 
     return equipment_lists
 
+# View all equipment in the system
+def viewAllEquipment():
+    print("\n  ── All Equipment List ── \n")
+
+    equipment_lists = getEquipmentLists()
+
+    if not equipment_lists:
+        print(f"\n {RED} [!] No equipment found in the system. {RESET}")
+        return
+    
+    print(pd.DataFrame(equipment_lists))
+    print(f"\n {GREEN} [✓] Total equipment: {len(equipment_lists)} {RESET}")
+
 # Save equipment lists
 def saveEquipmentList(equipment_lists):
     try:
@@ -181,6 +251,23 @@ def saveEquipmentList(equipment_lists):
             json.dump(equipment_lists, list, indent=4)
     except IOError as e:
         print(f"\n  {RED} [!] Error writing to equipment list file: {e} {RESET}")
+
+def getLoanHistory():
+    loan_history = []
+
+    try:
+        with open("files/loan_history.txt", 'r') as file:
+            content = file.read().strip()
+
+            if content:
+                loan_history = json.loads(content)
+                
+    except FileNotFoundError:
+        print(f"\n {RED} [!] 'files/loan_history.txt' not found. Please create the file. {RESET}")
+    except IOError as e:
+        print(f"\n  {RED} [!] Error reading loan history file: {e} {RESET}")
+
+    return loan_history
 
 
 #User Authentication

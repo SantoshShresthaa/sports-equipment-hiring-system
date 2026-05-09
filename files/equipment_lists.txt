@@ -1,13 +1,5 @@
 [
     {
-        "eq_id": "ADMKN",
-        "name": "llll",
-        "category": "llll",
-        "type": "asas",
-        "Quantity": "123",
-        "sport": "llll"
-    },
-    {
         "eq_id": "ASAA",
         "name": "assa",
         "category": "asas",

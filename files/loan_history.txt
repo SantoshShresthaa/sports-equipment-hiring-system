@@ -1,0 +1,9 @@
+[
+    {
+        "loan_id": "L001",
+        "student_id": "1",
+        "equipment_id": "EQ001",
+        "status": "Returned",
+        "date": "2024-01-15 10:30:00"
+    }
+]
