@@ -1,7 +1,7 @@
 [
   { "user_id": 1, "username": "admin", "password": "admin", "role": "coordinator" },
   { "user_id": 2, "username": "santoshshrestha.sh", "password": "P@ssw0rd", "role": "coordinator" },
-  { "user_id": 3, "username": "alice", "password": "pass1234", "role": "student" },
+  { "user_id": 3, "username": "student", "password": "student", "role": "student" },
   { "user_id": 4, "username": "bob", "password": "pass5678", "role": "student" },
   { "user_id": 5, "username": "charlie", "password": "pass9012", "role": "student" },
   { "user_id": 6, "username": "diana", "password": "pass3456", "role": "student" }

@@ -1,9 +1,17 @@
 [
     {
         "loan_id": "L001",
-        "student_id": "1",
+        "student_id": "3",
         "equipment_id": "EQ001",
-        "status": "Returned",
+        "status": "Borrowed",
         "date": "2024-01-15 10:30:00"
+    },
+    {
+        "loan_id": "LR-002",
+        "student_id": 3,
+        "equipment_id": "ASAA",
+        "status": "Returned",
+        "date": "2026-05-09 12:32:31",
+        "return_date": "2026-05-09 14:33:45"
     }
 ]

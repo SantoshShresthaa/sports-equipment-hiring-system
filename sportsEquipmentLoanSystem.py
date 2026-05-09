@@ -8,6 +8,7 @@
 # ─────────────────────────────────────────────────────────────────────────────
 USERS_FILE = "files/users.txt"
 EQUIPMENT_LIST_FILE = "files/equipment_lists.txt"
+BORROWING_HISTORY_FILE = "files/loan_history.txt"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # system color code
@@ -17,6 +18,7 @@ RED = "\033[91m"
 RESET = "\033[0m"
 
 
+from datetime import datetime
 import json
 import pandas as pd
 
@@ -29,11 +31,14 @@ class User:
     def getUsername(self):
         return self.username
 
-    def getUserRole(self):
-        return self.role
+    def getUserId(self):
+        return self.user_id
 
 class Coordinator(User):
-    def load_user_menu (self):
+    def __init__(self, user_id, username):
+        super().__init__(user_id, username, "Coordinator")
+
+    def loadUserMenu (self):
         while True:
             print("\n" + "═" * 50)
             print("   COORDINATOR MENU")
@@ -197,6 +202,169 @@ class Coordinator(User):
 
         print(f"\n {GREEN} [✓] Total loans for Student ID {student_id}: {len(student_loans)} {RESET}")
 
+class Student(User):
+    def __init__(self, user_id, username):
+        super().__init__(user_id, username, "Student")
+
+    def loadUserMenu(self):
+        while True:
+            print("\n" + "═" * 50)
+            print("   STUDENT MENU")
+            print("═" * 50)
+            print("  [1] View Available Equipment")
+            print("  [2] Borrow Equipment")
+            print("  [3] Return Equipment")
+            print("  [4] View My Loan History")
+            print("  [0] Logout")
+            print("═" * 50)
+
+            choice = input("  Enter choice: ").strip()
+
+            if   choice == "1": self.viewEquipmentList()
+            elif choice == "2": self.borrowEquipment()
+            elif choice == "3": self.returnEquipment()
+            elif choice == "4": self.viewMyHistory()
+            elif choice == "0":
+                print("\n  Logging out...")
+                break
+            else:
+                print("\n  [!] Invalid choice. Please try again.")
+    
+
+    def viewEquipmentList(self):
+        print("\n  ── Available Equipment List ── \n")
+
+        equipment_lists = getEquipmentLists()
+
+        if not equipment_lists:
+            print(f"\n {RED} [!] No equipment found in the system. {RESET}")
+            return
+        
+        print(pd.DataFrame(equipment_lists))
+        print(f"\n {GREEN} [✓] Total equipment: {len(equipment_lists)} {RESET}")
+    
+
+    def borrowEquipment(self):
+        print("\n  ── Borrow Equipment ── \n")
+
+        user_loans = self.getLoggedInUserBorrowHistory()
+
+        print(f"\n You have currently borrowed {len(user_loans)} equipment(s).")
+
+        if len(user_loans) >=2:
+            print(f"\n {RED} [!] You have already borrowed 2 equipment. Please return them before borrowing more. {RESET}")
+
+            print("\n Your current borrowings: \n")
+            print(pd.DataFrame(user_loans))
+            return
+        
+        print("\n Please select the equipment you want to borrow: \n")
+        print(pd.DataFrame(getEquipmentLists()))
+
+        equipment_id = input(" \n \n Enter Equipment ID to borrow: ").strip().upper()
+
+        equipment_lists = getEquipmentLists()
+        loan_record = {}
+
+        for equipment in equipment_lists:
+            if equipment['eq_id'] == equipment_id:
+                loan_record['loan_id'] = f"LR-00{len(getLoanHistory()) + 1}"
+                loan_record ['student_id'] = self.getUserId()
+                loan_record ['equipment_id'] = equipment_id
+                loan_record ['status'] = "Borrowed"
+                loan_record ['borrowed_date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+                self.storeBorrowedHistoryData(loan_record)
+                print(f"\n {GREEN} [✓] You have successfully borrowed '{equipment['name']}'. Please return it on time. {RESET}")
+                return
+        
+        print(f"\n {RED} [!] Equipment ID {equipment_id} not found. {RESET}")
+
+    
+    def returnEquipment(self):
+        print("\n  ── Return Equipment ── \n")
+
+        user_loans = self.getLoggedInUserBorrowHistory()
+
+        if not user_loans:
+            print(f"\n {RED} [!] You have no borrowed equipment to return. {RESET}")
+            return
+        
+        print("\n Your current borrowings: \n")
+        print(pd.DataFrame(user_loans))
+
+        loan_id = input("\n Enter Loan ID to return: ").strip().upper()
+
+        loan_history = getLoanHistory()
+        found = False
+
+        for loan in loan_history:
+            if loan['loan_id'] == loan_id and int(loan['student_id']) == self.getUserId() and loan['status'] == "Borrowed":
+                found = True
+                loan['status'] = "Returned"
+                loan['return_date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                break
+        
+        if not found:
+            print(f"\n {RED} [!] Loan ID {loan_id} not found in your borrowings. {RESET}")
+            return
+        
+        try:
+            with open(BORROWING_HISTORY_FILE, 'w') as file:
+                json.dump(loan_history, file, indent=4)
+            print(f"\n {GREEN} [✓] You have successfully returned the equipment. Thank you! {RESET}")
+        except IOError as e:
+            print(f"\n {RED} [!] Error writing to loan history file: {e} {RESET}")
+        
+    def viewMyHistory(self):
+        print("\n  ── My Loan History ── \n")
+
+        user_loans = self.getAllAuthUserHistory()
+
+        if not user_loans:
+            print(f"\n {RED} [!] You have no loan history. {RESET}")
+            return
+        
+        print(pd.DataFrame(user_loans))
+
+
+    def storeBorrowedHistoryData(self, loan_record):
+        loan_history = getLoanHistory()
+
+        loan_history.append(loan_record)
+
+        try:
+            with open(BORROWING_HISTORY_FILE, 'w') as file:
+                json.dump(loan_history, file, indent=4)
+        except IOError as e:
+            print(f"\n {RED} [!] Error writing to loan history file: {e} {RESET}")
+
+
+    def getLoggedInUserBorrowHistory(self):
+        loan_history = getLoanHistory()
+        user_id = self.getUserId()
+
+        user_loans = []
+
+        for loan in loan_history:
+            if int(loan['student_id']) == user_id and loan['status'] == "Borrowed":
+                user_loans.append(loan)
+
+        return user_loans
+    
+    def getAllAuthUserHistory(self):
+        loan_history = getLoanHistory()
+        user_id = self.getUserId()
+
+        user_loans = []
+
+        for loan in loan_history:
+            if int(loan['student_id']) == user_id:
+                user_loans.append(loan)
+
+        return user_loans
+
+    
 
 #get list of users in the system
 def getSystemUsers():
@@ -256,14 +424,14 @@ def getLoanHistory():
     loan_history = []
 
     try:
-        with open("files/loan_history.txt", 'r') as file:
+        with open(BORROWING_HISTORY_FILE, 'r') as file:
             content = file.read().strip()
 
             if content:
                 loan_history = json.loads(content)
                 
     except FileNotFoundError:
-        print(f"\n {RED} [!] 'files/loan_history.txt' not found. Please create the file. {RESET}")
+        print(f"\n {RED} [!] '{BORROWING_HISTORY_FILE}' not found. Please create the file. {RESET}")
     except IOError as e:
         print(f"\n  {RED} [!] Error reading loan history file: {e} {RESET}")
 
@@ -293,10 +461,12 @@ def authenticate():
             if user["role"] == "coordinator":
                 print(f"{GREEN}\n  Welcome, Coordinator {request_username}! {RESET}")
                 
-                return Coordinator(user['user_id'], user['username'], user['role'])
+                return Coordinator(user['user_id'], user['username'])
 
             elif user["role"] == "student":
                 print(f"{GREEN}\n  Welcome, Student {request_username}! {RESET}")
+
+                return Student(user['user_id'], user['username'])
     
     print(f"\n {RED} [!] Invalid username or password. Please try again. {RESET}")
 
@@ -325,7 +495,7 @@ def main():
                     print(f"\n  {remaining} attempt(s) remaining.")
 
             if user:
-                user.load_user_menu()
+                user.loadUserMenu()
             else:
                 print("\n  [!] Too many failed attempts. Returning to main menu.")
 
