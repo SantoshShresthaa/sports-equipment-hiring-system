@@ -67,5 +67,12 @@
         "status": "Returned",
         "borrowed_date": "2026-05-10 12:10:02",
         "return_date": "2026-05-10 12:16:04"
+    },
+    {
+        "loan_id": "LR-0010",
+        "student_id": "ST001",
+        "equipment_id": "EQ001",
+        "status": "Borrowed",
+        "borrowed_date": "2026-05-10 12:49:39"
     }
 ]

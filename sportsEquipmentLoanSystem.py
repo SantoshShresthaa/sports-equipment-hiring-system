@@ -270,6 +270,10 @@ class Student(User):
                 loan_record ['status'] = "Borrowed"
                 loan_record ['borrowed_date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+                #reduce the quantity of the equipment by 1
+                equipment['Quantity'] = str(int(equipment['Quantity']) - 1)
+                saveEquipmentList(equipment_lists)
+
                 self.storeBorrowedHistoryData(loan_record)
                 print(f"\n {GREEN} [✓] You have successfully borrowed '{equipment['name']}'. Please return it on time. {RESET}")
                 return

@@ -4,7 +4,7 @@
         "name": "Football",
         "category": "Ball",
         "type": "Outdoor",
-        "Quantity": "15"
+        "Quantity": "14"
     },
     {
         "eq_id": "EQ002",
