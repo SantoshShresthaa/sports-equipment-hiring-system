@@ -33,5 +33,12 @@
         "category": "ball",
         "type": "football",
         "Quantity": "123"
+    },
+    {
+        "eq_id": "EQ011",
+        "name": "Basketball",
+        "category": "Ball",
+        "type": "Basketball",
+        "Quantity": "999"
     }
 ]
