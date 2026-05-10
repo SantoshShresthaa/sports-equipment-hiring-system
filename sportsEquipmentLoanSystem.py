@@ -295,7 +295,7 @@ class Student(User):
         found = False
 
         for loan in loan_history:
-            if loan['loan_id'] == loan_id and int(loan['student_id']) == self.getUserId() and loan['status'] == "Borrowed":
+            if loan['loan_id'] == loan_id and loan['student_id'] == self.getUserId() and loan['status'] == "Borrowed":
                 found = True
                 loan['status'] = "Returned"
                 loan['return_date'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -343,7 +343,7 @@ class Student(User):
         user_loans = []
 
         for loan in loan_history:
-            if int(loan['student_id']) == user_id and loan['status'] == "Borrowed":
+            if loan['student_id'] == user_id and loan['status'] == "Borrowed":
                 user_loans.append(loan)
 
         return user_loans
@@ -355,7 +355,7 @@ class Student(User):
         user_loans = []
 
         for loan in loan_history:
-            if int(loan['student_id']) == user_id:
+            if loan['student_id'] == user_id:
                 user_loans.append(loan)
 
         return user_loans

@@ -1,17 +1,71 @@
 [
     {
-        "loan_id": "L001",
-        "student_id": "3",
-        "equipment_id": "EQ001",
-        "status": "Borrowed",
-        "date": "2024-01-15 10:30:00"
+        "loan_id": "L002",
+        "student_id": "ST001",
+        "equipment_id": "EQ003",
+        "status": "Returned",
+        "borrowed_date": "2025-05-02 11:20:00",
+        "return_date": "2025-05-05 15:45:00"
     },
     {
-        "loan_id": "LR-002",
-        "student_id": 3,
-        "equipment_id": "ASAA",
+        "loan_id": "L002",
+        "student_id": "ST001",
+        "equipment_id": "EQ003",
         "status": "Returned",
-        "date": "2026-05-09 12:32:31",
-        "return_date": "2026-05-09 14:33:45"
+        "borrowed_date": "2025-06-02 11:20:00",
+        "return_date": "2025-06-05 15:45:00"
+    },
+    {
+        "loan_id": "L001",
+        "student_id": "ST001",
+        "equipment_id": "EQ001",
+        "status": "Borrowed",
+        "borrowed_date": "2026-05-01 09:15:00"
+    },
+    {
+        "loan_id": "L002",
+        "student_id": "ST001",
+        "equipment_id": "EQ003",
+        "status": "Returned",
+        "borrowed_date": "2026-05-02 11:20:00",
+        "return_date": "2026-05-05 15:45:00"
+    },
+    {
+        "loan_id": "L003",
+        "student_id": "ST002",
+        "equipment_id": "EQ004",
+        "status": "Borrowed",
+        "borrowed_date": "2026-05-03 13:10:00"
+    },
+    {
+        "loan_id": "L004",
+        "student_id": "ST002",
+        "equipment_id": "EQ005",
+        "status": "Returned",
+        "borrowed_date": "2026-05-01 10:00:00",
+        "return_date": "2026-05-04 16:30:00"
+    },
+    {
+        "loan_id": "L005",
+        "student_id": "ST003",
+        "equipment_id": "EQ007",
+        "status": "Borrowed",
+        "borrowed_date": "2026-05-06 14:25:00"
+    },
+    {
+        "loan_id": "L006",
+        "student_id": "ST004",
+        "equipment_id": "EQ009",
+        "status": "Returned",
+        "borrowed_date": "2026-05-02 08:40:00",
+        "return_date": "2026-05-06 12:15:00"
+    },
+    {
+        "loan_id": "LR-009",
+        "student_id": "ST001",
+        "equipment_id": "EQ001",
+        "status": "Returned",
+        "borrowed_date": "2026-05-10 12:10:02",
+        "return_date": "2026-05-10 12:16:04"
     }
 ]
